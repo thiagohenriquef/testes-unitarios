@@ -1,11 +1,12 @@
 package br.com.testesunitarios.entidades;
 
 import java.util.Date;
+import java.util.List;
 
 public class Locacao {
 
     private User user;
-    private Filme filme;
+    private List<Filme> filme;
     private Date dataLocacao;
     private Date dataRetorno;
     private Double valor;
@@ -42,11 +43,11 @@ public class Locacao {
         this.valor = valor;
     }
 
-    public Filme getFilme() {
+    public List<Filme> getFilme() {
         return filme;
     }
 
-    public void setFilme(Filme filme) {
+    public void setFilme(List<Filme> filme) {
         this.filme = filme;
     }
 }

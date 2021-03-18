@@ -9,7 +9,9 @@ import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static br.com.testesunitarios.exceptions.Mensagens.FILME_NAO_ENCONTRADO;
 import static br.com.testesunitarios.exceptions.Mensagens.USUARIO_NAO_ENCONTRADO;
@@ -21,6 +23,7 @@ import static org.junit.Assert.fail;
 
 public class LocacaoServiceTest {
     private LocacaoService service;
+    private List<Filme> filmes;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -31,6 +34,7 @@ public class LocacaoServiceTest {
     @Before
     public void before() {
         service = new LocacaoService();
+        filmes = new ArrayList<>();
     }
 
     @BeforeClass
@@ -47,10 +51,9 @@ public class LocacaoServiceTest {
     public void teste() throws Exception {
         //cenario
         User user = new User("Usuario 1");
-        Filme filme = new Filme("Filme 1", 2, 5.0);
-
+        filmes.add(new Filme("Filme 1", 2, 5.0));
         //acao
-        Locacao locacao = service.alugarFilme(user, filme);
+        Locacao locacao = service.alugarFilme(user, filmes);
 
         //verificacao
         assertThat(locacao.getValor(), is(equalTo(5.0)));
@@ -68,19 +71,19 @@ public class LocacaoServiceTest {
     public void testLocacaoFilmeSemEstoqueUm() throws Exception {
         //cenario
         User user = new User("Usuario 1");
-        Filme filme = new Filme("Filme 1", 0, 5.0);
+        filmes.add(new Filme("Filme 1", 0, 5.0));
 
-        Locacao locacao = service.alugarFilme(user, filme);
+        Locacao locacao = service.alugarFilme(user, filmes);
     }
 
     @Test
     public void testLocacaoFilmeSemEstoqueDois() throws FilmeSemEstoqueException, LocadoraException {
         //cenario
         User user = new User("Usuario 1");
-        Filme filme = new Filme("Filme 1", 0, 5.0);
+        filmes.add(new Filme("Filme 1", 0, 5.0));
 
         expectedException.expect(Exception.class);
-        Locacao locacao = service.alugarFilme(user, filme);
+        Locacao locacao = service.alugarFilme(user, filmes);
     }
 
     @Test
@@ -88,10 +91,10 @@ public class LocacaoServiceTest {
         System.out.println("Forma Robusta");
         //cenario
         User user = null;
-        Filme filme = new Filme("Filme 1", 1, 5.0);
+        filmes.add(new Filme("Filme 1", 1, 5.0));
 
         try {
-            Locacao locacao = service.alugarFilme(user, filme);
+            Locacao locacao = service.alugarFilme(user, filmes);
             fail();
         } catch (LocadoraException e) {
             assertThat(e.getMessage(), is(USUARIO_NAO_ENCONTRADO.name()));
@@ -104,12 +107,12 @@ public class LocacaoServiceTest {
         System.out.println("Forma nova");
         //cenario
         User user = new User("Usuario 1");
-        Filme filme = null;
+        filmes.add(null);
 
         expectedException.expect(LocadoraException.class);
         expectedException.expectMessage(FILME_NAO_ENCONTRADO.name());
 
-        Locacao locacao = service.alugarFilme(user, filme);
+        Locacao locacao = service.alugarFilme(user, filmes);
     }
 
 }
