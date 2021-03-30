@@ -1,5 +1,6 @@
 package br.com.testesunitarios.matchers;
 
+import br.com.testesunitarios.utils.DataUtils;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
