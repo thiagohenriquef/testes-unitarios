@@ -2,17 +2,21 @@ package br.com.testesunitarios.servicos;
 
 import br.com.testesunitarios.builders.FilmeBuilder;
 import br.com.testesunitarios.builders.UsuarioBuilder;
+import br.com.testesunitarios.dao.LocacaoDAO;
+import br.com.testesunitarios.dao.LocacaoDAOFake;
 import br.com.testesunitarios.entidades.Filme;
 import br.com.testesunitarios.entidades.Locacao;
 import br.com.testesunitarios.entidades.User;
 import br.com.testesunitarios.exceptions.FilmeSemEstoqueException;
 import br.com.testesunitarios.exceptions.LocadoraException;
+import br.com.testesunitarios.exceptions.Mensagens;
 import br.com.testesunitarios.matchers.DiaDaSemanaMatcher;
 import br.com.testesunitarios.matchers.MatchersProprios;
 import br.com.testesunitarios.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import java.util.*;
 
@@ -26,10 +30,13 @@ import static br.com.testesunitarios.utils.DataUtils.isMesmaData;
 import static br.com.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 public class LocacaoServiceTest {
     private LocacaoService service;
     private List<Filme> filmes;
+    private LocacaoDAO locacaoDAO;
+    private SPCService spcService;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -41,6 +48,10 @@ public class LocacaoServiceTest {
     public void before() {
         service = new LocacaoService();
         filmes = new ArrayList<>();
+        locacaoDAO = Mockito.mock(LocacaoDAO.class);
+        service.setLocacaoDAO(locacaoDAO);
+        spcService = Mockito.mock(SPCService.class);
+        service.setSpcService(spcService);
     }
 
     @BeforeClass
@@ -129,7 +140,7 @@ public class LocacaoServiceTest {
 
         //cenario
         User user = umUsuario().agora();
-        List<Filme> filmes = Arrays.asList(umFilme().agora());
+        List<Filme> filmes = Collections.singletonList(umFilme().agora());
 
         //acao
         Locacao retorno = service.alugarFilme(user, filmes);
@@ -140,6 +151,21 @@ public class LocacaoServiceTest {
         assertThat(retorno.getDataRetorno(), new DiaDaSemanaMatcher(Calendar.MONDAY));
         assertThat(retorno.getDataRetorno(), caiEm(Calendar.MONDAY));
         assertThat(retorno.getDataRetorno(), caiEmUmaSegunda());
+    }
+
+    @Test
+    public void naoDeveAlugarNegativadoSP() throws FilmeSemEstoqueException, LocadoraException {
+//        cenário
+        User user = umUsuario().comNome("Thiago").agora();
+        List<Filme> filmes = Collections.singletonList(umFilme().agora());
+        when(spcService.possuiNegativacao(user)).thenReturn(true);
+
+//        verificação
+        expectedException.expect(LocadoraException.class);
+        expectedException.expectMessage(Mensagens.USUARIO_NEGATIVADO_SPC.name());
+//        ação
+        Locacao retorno = service.alugarFilme(user, filmes);
+
     }
 
 }

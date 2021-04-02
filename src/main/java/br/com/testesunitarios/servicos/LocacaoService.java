@@ -1,12 +1,12 @@
 package br.com.testesunitarios.servicos;
 
+import br.com.testesunitarios.dao.LocacaoDAO;
 import br.com.testesunitarios.entidades.Filme;
 import br.com.testesunitarios.entidades.Locacao;
 import br.com.testesunitarios.entidades.User;
 import br.com.testesunitarios.exceptions.FilmeSemEstoqueException;
 import br.com.testesunitarios.exceptions.LocadoraException;
 import br.com.testesunitarios.exceptions.Mensagens;
-import br.com.testesunitarios.utils.DataUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +19,9 @@ import static java.util.Objects.isNull;
 
 public class LocacaoService {
 
+    private LocacaoDAO dao;
+    private SPCService spcService;
+
     public Locacao alugarFilme(User user, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
         if (isNull(user)) {
             throw new LocadoraException(Mensagens.USUARIO_NAO_ENCONTRADO.name());
@@ -29,6 +32,11 @@ public class LocacaoService {
         if (filmes.stream().anyMatch(x -> x.getEstoque() == 0)) {
             throw new FilmeSemEstoqueException();
         }
+
+        if (spcService.possuiNegativacao(user)) {
+            throw new LocadoraException(Mensagens.USUARIO_NEGATIVADO_SPC.name());
+        }
+
         Locacao locacao = new Locacao();
         locacao.setFilme(filmes);
         locacao.setUsuario(user);
@@ -44,9 +52,17 @@ public class LocacaoService {
         locacao.setDataRetorno(dataEntrega);
 
         //Salvando a locacao...
-        //TODO adicionar método para salvar
+        dao.salvar(locacao);
 
         return locacao;
+    }
+
+    public void setLocacaoDAO(LocacaoDAO dao) {
+        this.dao = dao;
+    }
+
+    public void setSpcService(SPCService spcService) {
+        this.spcService = spcService;
     }
 
     private Double aplicaDescontosNoValor(List<Filme> filmes) {

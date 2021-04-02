@@ -1,5 +1,7 @@
 package br.com.testesunitarios.servicos;
 
+import br.com.testesunitarios.dao.LocacaoDAO;
+import br.com.testesunitarios.dao.LocacaoDAOFake;
 import br.com.testesunitarios.entidades.Filme;
 import br.com.testesunitarios.entidades.Locacao;
 import br.com.testesunitarios.entidades.User;
@@ -11,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,10 +22,13 @@ import java.util.List;
 import static br.com.testesunitarios.builders.FilmeBuilder.umFilme;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class CalculoLocacaoServiceTest {
     private LocacaoService service;
+    private LocacaoDAO locacaoDAO;
+    private SPCService spcService;
 
     @Parameter
     public List<Filme> filmes;
@@ -36,6 +42,10 @@ public class CalculoLocacaoServiceTest {
     @Before
     public void setup(){
         service = new LocacaoService();
+        locacaoDAO = Mockito.mock(LocacaoDAO.class);
+        service.setLocacaoDAO(locacaoDAO);
+        spcService = Mockito.mock(SPCService.class);
+        service.setSpcService(spcService);
     }
 
     private static Filme filme1 = umFilme().comValoEspecifico(4.0).agora();
@@ -62,6 +72,7 @@ public class CalculoLocacaoServiceTest {
     public void deveCalcularValorLocacaoConsiderandoDescontos() throws FilmeSemEstoqueException, LocadoraException{
         //cenario
         User usuario = new User("Usuario 1");
+//        when(spcService.possuiNegativacao(usuario)).thenReturn(false);
 
         //acao
         Locacao resultado = service.alugarFilme(usuario, filmes);
