@@ -13,7 +13,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,8 +29,11 @@ import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class CalculoLocacaoServiceTest {
+    @InjectMocks
     private LocacaoService service;
+    @Mock
     private LocacaoDAO locacaoDAO;
+    @Mock
     private SPCService spcService;
 
     @Parameter
@@ -41,11 +47,7 @@ public class CalculoLocacaoServiceTest {
 
     @Before
     public void setup(){
-        service = new LocacaoService();
-        locacaoDAO = Mockito.mock(LocacaoDAO.class);
-        service.setLocacaoDAO(locacaoDAO);
-        spcService = Mockito.mock(SPCService.class);
-        service.setSpcService(spcService);
+        MockitoAnnotations.initMocks(this);
     }
 
     private static Filme filme1 = umFilme().comValoEspecifico(4.0).agora();
@@ -80,4 +82,5 @@ public class CalculoLocacaoServiceTest {
         //verificacao
         assertThat(resultado.getValor(), is(valorLocacao));
     }
+
 }
