@@ -7,14 +7,14 @@ import br.com.testesunitarios.entidades.User;
 import br.com.testesunitarios.exceptions.FilmeSemEstoqueException;
 import br.com.testesunitarios.exceptions.LocadoraException;
 import br.com.testesunitarios.exceptions.Mensagens;
+import br.com.testesunitarios.utils.DataUtils;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static br.com.testesunitarios.utils.DataUtils.adicionarDias;
-import static br.com.testesunitarios.utils.DataUtils.verificarDiaSemana;
+import static br.com.testesunitarios.utils.DataUtils.*;
 import static java.util.Objects.isNull;
 
 public class LocacaoService {
@@ -63,6 +63,17 @@ public class LocacaoService {
         dao.salvar(locacao);
 
         return locacao;
+    }
+
+    public void prorrogarLocacao(Locacao locacao, int dias) {
+        Locacao novaLocacao = new Locacao();
+        novaLocacao.setDataLocacao(new Date());
+        novaLocacao.setDataRetorno(obterDataComDiferencaDias(dias));
+        novaLocacao.setFilme(locacao.getFilme());
+        novaLocacao.setUsuario(locacao.getUsuario());
+        novaLocacao.setValor(locacao.getValor() * dias);
+
+        dao.salvar(novaLocacao);
     }
 
 

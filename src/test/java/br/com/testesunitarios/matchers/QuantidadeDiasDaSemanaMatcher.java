@@ -4,6 +4,8 @@ import br.com.testesunitarios.utils.DataUtils;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -25,9 +27,8 @@ public class QuantidadeDiasDaSemanaMatcher extends TypeSafeMatcher<Date> {
 
     @Override
     public void describeTo(Description description) {
-        Calendar date = Calendar.getInstance();
-        date.set(Calendar.DAY_OF_WEEK, qtdDias);
-        String dataExtenso = date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, new Locale("pt", "BR"));
-        description.appendText(dataExtenso);
+        Date dataEsperada = obterDataComDiferencaDias(qtdDias);
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        description.appendText(format.format(dataEsperada));
     }
 }

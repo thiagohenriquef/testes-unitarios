@@ -16,4 +16,8 @@ public class Calculadora {
         }
         return i / j;
     }
+
+    public void imprime() {
+        System.out.println("Passei aqui");
+    }
 }

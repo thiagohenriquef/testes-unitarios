@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class DiaDaSemanaMatcher extends TypeSafeMatcher<Date> {
+public class  DiaDaSemanaMatcher extends TypeSafeMatcher<Date> {
     private Integer diaDaSemana;
 
     public DiaDaSemanaMatcher(Integer diaDaSemana) {

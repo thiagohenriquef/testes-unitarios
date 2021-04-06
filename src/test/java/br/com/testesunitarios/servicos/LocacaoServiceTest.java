@@ -12,6 +12,7 @@ import br.com.testesunitarios.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -215,4 +216,21 @@ public class LocacaoServiceTest {
         service.alugarFilme(user, filmes);
     }
 
+    @Test
+    public void deveProrrogarUmaLocacao() {
+//        cenário
+        Locacao locacao = umaLocacao().agora();
+
+//        ação
+        service.prorrogarLocacao(locacao, 2);
+
+//        verificação
+        ArgumentCaptor<Locacao> argumentCaptor = ArgumentCaptor.forClass(Locacao.class);
+        verify(dao).salvar(argumentCaptor.capture());
+        Locacao retorno = argumentCaptor.getValue();
+
+        error.checkThat(retorno.getValor(), is(8.0));
+        error.checkThat(retorno.getDataLocacao(), is(ehHoje()));
+        error.checkThat(retorno.getDataRetorno(), is(ehHojeComDiferencaDeDias(2)));
+    }
 }
