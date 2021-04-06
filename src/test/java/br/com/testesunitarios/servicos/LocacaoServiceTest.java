@@ -6,6 +6,7 @@ import br.com.testesunitarios.entidades.Locacao;
 import br.com.testesunitarios.entidades.User;
 import br.com.testesunitarios.exceptions.FilmeSemEstoqueException;
 import br.com.testesunitarios.exceptions.LocadoraException;
+import br.com.testesunitarios.exceptions.Mensagens;
 import br.com.testesunitarios.matchers.DiaDaSemanaMatcher;
 import br.com.testesunitarios.utils.DataUtils;
 import org.junit.*;
@@ -157,7 +158,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void naoDeveAlugarNegativadoSP() throws FilmeSemEstoqueException {
+    public void naoDeveAlugarNegativadoSP() throws Exception {
 //        cenário
         User user = umUsuario().comNome("Thiago").agora();
         List<Filme> filmes = Collections.singletonList(umFilme().agora());
@@ -196,6 +197,22 @@ public class LocacaoServiceTest {
         verify(email, Mockito.atLeastOnce()).notificarAtraso(usuario3);
         verify(email, never()).notificarAtraso(usuario2);
         verifyNoMoreInteractions(email);
+    }
+
+    @Test
+    public void deveTratarErroNoSPC() throws Exception {
+//        cenário
+        User user = umUsuario().agora();
+        filmes.add(umFilme().agora());
+
+        when(spc.possuiNegativacao(user)).thenThrow(new Exception(FALHA_SPC.name()));
+
+//        verificação
+        expectedException.expect(LocadoraException.class);
+        expectedException.expectMessage(FALHA_SPC.name());
+
+//        ação
+        service.alugarFilme(user, filmes);
     }
 
 }
