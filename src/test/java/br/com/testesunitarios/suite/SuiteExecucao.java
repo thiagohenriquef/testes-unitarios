@@ -1,8 +1,6 @@
 package br.com.testesunitarios.suite;
 
-import br.com.testesunitarios.servicos.CalculadoraTest;
 import br.com.testesunitarios.servicos.CalculoLocacaoServiceTest;
-import br.com.testesunitarios.servicos.LocacaoService;
 import br.com.testesunitarios.servicos.LocacaoServiceTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

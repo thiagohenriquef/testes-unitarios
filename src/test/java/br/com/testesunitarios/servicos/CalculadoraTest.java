@@ -1,7 +1,6 @@
 package br.com.testesunitarios.servicos;
 
 import br.com.testesunitarios.exceptions.NaoPodeDividirPorZeroException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
