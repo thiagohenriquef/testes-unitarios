@@ -12,7 +12,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        CalculadoraTest.class,
+//        CalculadoraTest.class,
         CalculoLocacaoServiceTest.class,
         LocacaoServiceTest.class
 })

@@ -7,7 +7,6 @@ import br.com.testesunitarios.entidades.User;
 import br.com.testesunitarios.exceptions.FilmeSemEstoqueException;
 import br.com.testesunitarios.exceptions.LocadoraException;
 import br.com.testesunitarios.exceptions.Mensagens;
-import br.com.testesunitarios.utils.DataUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -48,11 +47,11 @@ public class LocacaoService {
         Locacao locacao = new Locacao();
         locacao.setFilme(filmes);
         locacao.setUsuario(user);
-        locacao.setDataLocacao(Calendar.getInstance().getTime());
+        locacao.setDataLocacao(obterData());
         locacao.setValor(aplicaDescontosNoValor(filmes));
 
         //Entrega no dia seguinte
-        Date dataEntrega = Calendar.getInstance().getTime();
+        Date dataEntrega = obterData();
         dataEntrega = adicionarDias(dataEntrega, 1);
         if (verificarDiaSemana(dataEntrega, Calendar.SUNDAY)) {
             dataEntrega = adicionarDias(dataEntrega, 1);
@@ -63,6 +62,10 @@ public class LocacaoService {
         dao.salvar(locacao);
 
         return locacao;
+    }
+
+    protected Date obterData() {
+        return new Date();
     }
 
     public void prorrogarLocacao(Locacao locacao, int dias) {
@@ -84,10 +87,6 @@ public class LocacaoService {
                 emailService.notificarAtraso(locacao.getUsuario());
             }
         }
-    }
-
-    public void setLocacaoDAO(LocacaoDAO dao) {
-        this.dao = dao;
     }
 
     public void setSpcService(SPCService spcService) {
